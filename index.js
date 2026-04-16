@@ -9,6 +9,9 @@ const axios = require("axios");
 // 🔑 PUT YOUR OPENAI KEY HERE
 const OPENAI_KEY = "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";
 
+// 📱 PUT YOUR NUMBER HERE (NO +, NO SPACE)
+const PHONE_NUMBER = "237654319658";
+
 const xp = new Map();
 const spamDB = new Map();
 
@@ -18,29 +21,26 @@ async function startBot() {
 
     const sock = makeWASocket({
         auth: state,
-        printQRInTerminal: true,
+        printQRInTerminal: false,
         logger: P({ level: "silent" }),
         browser: ["Railway Bot", "Chrome", "1.0.0"]
     });
 
-    // ✅ SAVE LOGIN SESSION
+    // 💾 SAVE LOGIN
     sock.ev.on("creds.update", saveCreds);
 
-    // 🔥 QR + CONNECTION STATUS (FIXED)
-    sock.ev.on("connection.update", (update) => {
-        const { connection, qr } = update;
+    // 🔥 PAIRING CODE LOGIN (NO QR)
+    if (!sock.authState.creds.registered) {
+        setTimeout(async () => {
+            const code = await sock.requestPairingCode(PHONE_NUMBER);
+            console.log("📲 YOUR PAIRING CODE:", code);
+        }, 3000);
+    }
 
-        if (qr) {
-            console.log("📲 SCAN THIS QR:");
-            console.log(qr);
-        }
-
+    // ✅ CONNECTION STATUS
+    sock.ev.on("connection.update", ({ connection }) => {
         if (connection === "open") {
             console.log("✅ BOT CONNECTED SUCCESSFULLY");
-        }
-
-        if (connection === "close") {
-            console.log("❌ CONNECTION CLOSED");
         }
     });
 
@@ -50,7 +50,7 @@ async function startBot() {
 
         if (action === "add") {
             await sock.sendMessage(id, {
-                text: `👋 Welcome @${participants[0].split("@")[0]} to the group!`,
+                text: `👋 Welcome @${participants[0].split("@")[0]}!`,
                 mentions: participants
             });
         }
@@ -63,8 +63,6 @@ async function startBot() {
         if (!msg.message || msg.key.fromMe) return;
 
         const sender = msg.key.remoteJid;
-        const isGroup = sender.endsWith("@g.us");
-
         const text =
             msg.message.conversation ||
             msg.message.extendedTextMessage?.text;
@@ -139,7 +137,7 @@ async function startBot() {
             });
         }
 
-        // 📌 HELP
+        // 📌 HELP MENU
         if (msgText === "help") {
             await sock.sendMessage(sender, {
                 text:
@@ -147,7 +145,7 @@ async function startBot() {
 
 hi - greet bot
 ping - test bot
-ask <question> - AI chat
+ask <question> - AI
 xp - check XP`
             });
         }
