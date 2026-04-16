@@ -13,7 +13,7 @@ const GEMINI_KEY = "AQ.Ab8RN6KT1LJHk_HR4LefRkB4jxXHKF59n4QsTqpW5Vie-AZvRw";
 const GROK_KEY = "YOUR_GROK_KEY";
 
 // 👑 OWNER
-const OWNER_NUMBER = "2376XXXXXXXX";
+const OWNER_NUMBER = "237654319658";
 
 // ⚙️ BOT SETTINGS
 let aiProvider = "gpt";
@@ -30,7 +30,7 @@ async function startBot() {
 
     const sock = makeWASocket({
         auth: state,
-        printQRInTerminal: false,
+        printQRInTerminal: true,
         logger: P({ level: "info" }),
         browser: ["Atlas Bot", "Chrome", "1.0.0"]
     });
