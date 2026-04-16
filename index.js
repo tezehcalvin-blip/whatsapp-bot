@@ -8,8 +8,8 @@ const P = require("pino");
 const axios = require("axios");
 
 // 🔑 KEYS
-const OPENAI_KEY = "YOUR_OPENAI_API_KEY";
-const GEMINI_KEY = "YOUR_GEMINI_KEY";
+const OPENAI_KEY = "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";
+const GEMINI_KEY = "AQ.Ab8RN6KT1LJHk_HR4LefRkB4jxXHKF59n4QsTqpW5Vie-AZvRw";
 const GROK_KEY = "YOUR_GROK_KEY";
 
 // 👑 OWNER
