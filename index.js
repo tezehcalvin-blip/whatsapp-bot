@@ -6,6 +6,7 @@ const {
 const P = require("pino");
 const axios = require("axios");
 
+// 🔑 PUT YOUR OPENAI KEY HERE
 const OPENAI_KEY = "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";
 
 const xp = new Map();
@@ -18,10 +19,30 @@ async function startBot() {
     const sock = makeWASocket({
         auth: state,
         printQRInTerminal: true,
-        logger: P({ level: "silent" })
+        logger: P({ level: "silent" }),
+        browser: ["Railway Bot", "Chrome", "1.0.0"]
     });
 
+    // ✅ SAVE LOGIN SESSION
     sock.ev.on("creds.update", saveCreds);
+
+    // 🔥 QR + CONNECTION STATUS (FIXED)
+    sock.ev.on("connection.update", (update) => {
+        const { connection, qr } = update;
+
+        if (qr) {
+            console.log("📲 SCAN THIS QR:");
+            console.log(qr);
+        }
+
+        if (connection === "open") {
+            console.log("✅ BOT CONNECTED SUCCESSFULLY");
+        }
+
+        if (connection === "close") {
+            console.log("❌ CONNECTION CLOSED");
+        }
+    });
 
     // 👋 GROUP WELCOME
     sock.ev.on("group-participants.update", async (update) => {
@@ -158,5 +179,5 @@ async function askGPT(prompt) {
     }
 }
 
-// START BOT
+// 🚀 START BOT
 startBot();
